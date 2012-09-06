@@ -11,6 +11,15 @@
 
 \begin{multicols*}{4}
 \subsection*{Automata}
+
+\subsubsection*{Pumping Lemma for regular languages}
+If $A$ is a regular language, then there is number $p$ (the pumping length) where, if $s$ is any string in $A$ of at least $p$, then $s$ may be divided into three pieces, $s = xyz$, satisfying the following conditions:
+\begin{enumerate}
+\item for each $i \geq 0$, $xy^iz \in A$
+\item $|y| > 0$, and
+\item $|xy| \leq p$
+\end{enumerate}
+
 Ways to solve (both handl negative weight edges): 
 \begin{itemize}
 \item Fast Matrix Multiplication ($\theta(|V|^3log|V|)$)
