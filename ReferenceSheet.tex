@@ -22,7 +22,7 @@ If $A$ is a regular language, then there is number $p$ (the pumping length) wher
 
 Prove pumping lemma by contradiction.  Assume the language is regular, then find an instance where $xyyz$ is not in the language.
 
-
+\subsubsection*{Decidability}
 
 
 \subsection*{Algorithms}
@@ -52,6 +52,26 @@ Prove pumping lemma by contradiction.  Assume the language is regular, then find
 \item SUBSET-SUM: Is there a subset of integers from $S$ that some to
   exactly $t$? 
 \end{itemize}
+
+    {\bf Reductions}:
+    \begin{itemize}
+    \item Circuit-Sat $\rightarrow$ SAT: For each input to the CS, create a
+      variable in the SAT.  For each output of a logic gate, create a
+      variable.  Clauses in the SAT are the ouput iff (input gate
+      input gate ...). SAT is conjunction of clauses (including final
+      output).     
+    \item SAT $\rightarrow$ 3-CNF-SAT: Build a parse tree (outermost
+      to innermost).  This gets it to at most 3 elements per clause.
+      Then generate a truth table for the 3 elements, grab the ones
+      that evaluate to 1, or them, use DeMorgan's.  
+    \item 3-CNF-SAT $\rightarrow$ Clique: For each clause, make 3
+      vertices (representing the variables in the clause).  Draw edges
+      between vertices if the vertices aren't negations of each other
+      and they aren't from the same clause.
+    \item Clique $\rightarrow$ Vertex-Cover: Find the complement of
+      the graph in the Clique problem.  $VC-k$ becomes $|V| - clique-k$
+    \end{itemize}
+
 
 \subsection*{Dynamic Programming}
 Basic idea: Decompose a problem into subproblems, resuing overlapping
@@ -262,24 +282,6 @@ t_{kj}^{(k-1)} $
     {\bf return} $r,s$ \;
     \end{algorithm}
     
-    {\bf Reductions}:
-    \begin{itemize}
-    \item Circuit-Sat $\rightarrow$ SAT: For each input to the CS, create a
-      variable in the SAT.  For each output of a logic gate, create a
-      variable.  Clauses in the SAT are the ouput iff (input gate
-      input gate ...). SAT is conjunction of clauses (including final
-      output).     
-    \item SAT $\rightarrow$ 3-CNF-SAT: Build a parse tree (outermost
-      to innermost).  This gets it to at most 3 elements per clause.
-      Then generate a truth table for the 3 elements, grab the ones
-      that evaluate to 1, or them, use DeMorgan's.  
-    \item 3-CNF-SAT $\rightarrow$ Clique: For each clause, make 3
-      vertices (representing the variables in the clause).  Draw edges
-      between vertices if the vertices aren't negations of each other
-      and they aren't from the same clause.
-    \item Clique $\rightarrow$ Vertex-Cover: Find the complement of
-      the graph in the Clique problem.  $VC-k$ becomes $|V| - clique-k$
-    \end{itemize}
     
   \end{minipage}
   
