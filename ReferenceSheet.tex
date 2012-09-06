@@ -1,0 +1,379 @@
+\documentclass[7pt]{article}
+
+\usepackage{amsmath}
+\usepackage[margin=.25in, landscape]{geometry}
+\usepackage[ruled, vlined]{algorithm2e}
+%\usepackage{algorithmic}
+\usepackage{multicol}
+
+\linespread{1}
+\begin{document}
+
+\begin{multicols*}{4}
+\subsection*{Automata}
+Ways to solve (both handl negative weight edges): 
+\begin{itemize}
+\item Fast Matrix Multiplication ($\theta(|V|^3log|V|)$)
+\item Floyd Warshall: $(\theta(|V|^3))$
+\end{itemize}
+
+\subsubsection*{Matrix Multiplication}
+Basic idea: Find min weight of any path from i to j that uses at most
+$m$ edges ($m$ being an iterator from $1..n$).  
+
+\begin{itemize}
+\item Uses optimal substructure to get recursive definition (is there
+  an intermediate node that will shorten the path between i and j)
+\begin{equation} l_{ij}^{(m)} = min_{1 \leq k \leq n}(l_{ik}^{(m-1)} +
+  w_{kj})\end{equation}
+\item Start with $L^{(1)} = W$ and compute new $L$s until $L^{(n-1)}$
+  (n being the number of rows in L) 
+\item  If $n^{th}$ iteration changes (new shortest path), there's a
+  neg weight cycle
+\item Faster APSP with MM alters the number of times needed to compute
+  $L^{(n)}$.  Just compute $L^{(2m)}$ finding min of $l"_{ij}^{(m)}$,
+  and $l_{ik}^{m} + l_{kj}^{m}$
+\end{itemize}
+
+\subsubsection*{Floyd-Warshall}
+Basic idea: For each vertex $k$, find the shortest path between every
+two vertices $i$ and $j$ using $k$ as a possible intermediary.  For
+each iteration of $k$, the shortest path between $i$ and $j$ will be
+the shortest path using the intermediate vertices $1..k-1$ (it could
+be a direct path or any path using some $k$ as step between $i$ and
+$j$).  
+
+\subsubsection*{Transitive Closure}
+For some directed, unweighted graph, does a path exist between i and
+j?  Use FW: set edge weights to 0 if $i \neq j \wedge (i,j) \not\in E$ or
+1 if $i = j \vee (i,j) \in E$ ($\theta(n^3)$).
+
+\subsection*{Max Flow}
+{\bf Flow Network:} D-graph where each edge has nonnegative capacity
+(typically connected)
+{\bf Flow:} Some assignment of real numbers to each edge where the
+capacity constraint and flow conservation hold.
+
+
+\begin{itemize}
+\item Capacity: Should be nonnegative and not exceed capacity
+\item Flow Cons.: Sum of flows entering vertex is equal to sum of flows
+leaving vertex
+\item Value of the flow for the graph is the sum of all flow leaving the
+start vertex.
+\item Multiple sources/sinks can be combined into one
+  pseudo-sink/source with capacities of infinity connecting them
+\end{itemize}
+
+\subsubsection*{Ford-Fulkerson}
+$O(|E|f*)$
+
+\begin{itemize}
+\item Creates residual network, which is the same network with
+  capacities reduced based on amount of flow going through it
+\item An edge U----5/9---$>$V in the original flow would have two edges
+  in the residual U----4/9---$>$V and U$<$----5/9---V
+\item Algorithm Outline:
+  \begin{itemize}
+  \item Take initial graph with flow of 0, find augmenting path (a
+    simple path through the residual network).  
+  \item Find smallest capacity on augmenting path and add that
+    capacity to each corresponding edge in the original flow (i.e.,
+    augment the flow).
+  \item Repeat until no augmenting paths are found
+  \end{itemize}
+\end{itemize}
+
+\subsubsection*{Edmonds-Karp}
+$O(|V||E|^2)$
+
+Same as FF except always choose shortest path (edge count) for
+augmenting path.
+
+\subsubsection*{Maximum Bipartite matching}
+$O(|V||E|)$
+
+Basic idea is to create a dummy root node with infinite capacities
+going to each vertex on the left of the bipartite graph, and a finish
+node on the right.  Each edge between already existing vertices has a
+capacity of 1.  Max flow will show the highest number of edges matched
+between the two sets of vertices.  
+
+\subsubsection*{Max-Flow Min-Cut}
+\begin{itemize}
+\item Used to prove that if there's an augmenting path, flow can be
+  increased
+\item Net flow across a cut is the sum of all forward edges minus the
+  sum of all back edges across the cut
+\item Capacity of the cut are the sum of every forward edge
+\item Proof (truncated):
+  \begin{enumerate}
+  \item $f$ is a max flow in $G$
+  \item $G_f$ has no augmenting paths
+  \item $|f| = c(S,T)$ for some (i.e., minimum) cut $(S,T)$ of $G$
+  \end{enumerate}
+
+  Show that $1->2->3->1$
+\end{itemize}
+\subsection*{NP-Completeness}
+
+{\bf Show a problem is in NPC}
+\begin{itemize}
+\item Show it's in NP by showing it's verifiable in poly time using
+  some certificate
+\item Reduce \emph{from} any known NPC problem (all possible instances
+  of one) to the unknown NPC problem in poly time.
+\end{itemize}
+
+{\bf NPC problems to reduce from}
+\begin{itemize}
+\item HAM-CYCLE: Does a graph $G$ have a Ham-cycle (a simple cycle
+  that visits every vertex exactly once)?
+\item CIRCUIT-SAT: Is there a satisfying assignment of inputs to a
+  circuit that makes it output 1?
+\item SAT: Does some boolean formula have a set of satisfying assignments?
+\item 3-CNF-SAT: Ditto, but the SAT takes on the specific form of
+  $(x_k \wedge x_j \wedge x_i) \vee (x_k \wedge x_v \wedge x_l) ...$
+\item CLIQUE: Does graph $G$ contain a clique of size $k$?
+\item VERTEX-COVER: Does graph $G$ have a set of $k$ vertices that
+  touch every edge
+\item TSP: Does a complete, weighted graph $G$ have a HamCycle of
+  total weight $\leq k$?
+\item SUBSET-SUM: Is there a subset of integers from $S$ that some to
+  exactly $t$? 
+\end{itemize}
+
+\subsection*{Dynamic Programming}
+Basic idea: Decompose a problem into subproblems, resuing overlapping
+solutions to the subproblems.
+
+\subsubsection*{Rod Cutting}
+Goal: Cut rod of length $n$ into smaller rods to maximize profit (cuts
+occur at integral boundaries).  Using optimal substructure, can find
+the optimal size of cuts.
+
+{\bf Top-down with memoization}: Start with some recurisve formula, but
+for each call, check to see if the result for that call has already
+been computed.
+\end{multicols*}
+\begin{figure*}[ttt!] %Still no idea what the 'ttt!' does
+  \begin{minipage}[t]{.25\linewidth}
+    \vspace{0pt}
+    
+    {\bf Bottom-up}: Start with small subproblems, then build up the
+    solution.
+    
+    {\bf Solution for rod cutting - memoized}: ($\theta(n^2)$) If the solution for the
+    current call hasn't already been found, find the max profit of every
+    cut of the current length from cut of size 1 to $n$ plus the max
+    profit of all possible cuts using the uncut portion.   
+    
+    \begin{algorithm}[H]
+      \caption{Print-All-Pairs-Shortest-Path($\Pi,i,j$)}
+      \uIf{$i==j$}{
+        print $i$ 
+      }
+      \uElseIf{$\pi_{ij}==$ {\sc nil}}{
+        print ``no path from '' $i$ `` to '' $j$ `` exists'' 
+      }
+      \uElse{
+        {\sc Print-All-Pairs-Shortest-Path}$(\Pi,i,\pi_{ij})$ 
+        print $j$ 
+      }
+    \end{algorithm}
+    
+    \begin{algorithm}[H]
+    \caption{Extend-Shortest-Paths($L,W$)}
+      $n=$ number of rows of $L$  \hspace*{0.25in} // This is $L^{(m)}$ 
+
+      create new $n \times n$ matrix $L'$ \hspace*{0.125in} // This will be
+$L^{(m+1)}$ 
+
+      \For{$i=1$ to $n$}{
+          \For{$j=1$ to $n$}{
+              $\ell_{ij}' = \infty$ 
+
+              \For{$k=1$ to $n$}{
+                  $\ell_{ij}' = \min \left( \ell_{ij}', \ell_{ik}+w_{kj} \right)$
+              }
+          }
+      }
+      {\bf return} $L'$ 
+    \end{algorithm}
+
+    \begin{algorithm}[H]
+    \caption{Slow-All-Pairs-Shortest-Paths($W$)}
+      $n=$ number of rows of $W$ 
+
+      $L^{(1)}=W$ 
+
+      \For{$m=2$ to $n-1$}{
+          $L^{(m)}=$ {\sc Extend-Shortest-Paths}$(L^{(m-1)},W)$ 
+      }
+      {\bf return} $L^{(n-1)}$ 
+    \end{algorithm}
+
+  \end{minipage}
+  \begin{minipage}[t]{.25\linewidth}
+    \vspace{0pt}
+
+    \begin{algorithm}[H]
+    \caption{Faster-All-Pairs-Shortest-Paths($W$)}
+      $n=$ number of rows of $W$ 
+
+      $L^{(1)}=W$ 
+
+      $m=1$ 
+
+      \While{$m< n-1$}{
+          $L^{(2m)}=$ {\sc Extend-Shortest-Paths}$(L^{(m)},L^{(m)})$ 
+
+          $m=2m$ 
+      }
+      {\bf return} $L^{(m)}$ 
+    \end{algorithm}
+
+
+    \begin{algorithm}[H]
+    \caption{Floyd-Warshall($W$)}
+      $n=$ number of rows of $W$ 
+
+      $D^{(0)}=W$ 
+
+      \For{$k= 1$ to $n$}{
+         \For{$i= 1$ to $n$}{
+             \For{$j= 1$ to $n$}{
+                $d_{ij}^{(k)}  = \min \left( d_{ij}^{(k-1)} , d_{ik}^{(k-1)} +
+d_{kj}^{(k-1)} \right)$
+              }
+          }
+      }
+      {\bf return} $D^{(n)}$ 
+    \end{algorithm}
+    
+    \begin{algorithm}[H]
+    \caption{Transitive-Closure($G$)}
+      allocate and initialize $n \times n$ matrix $T^{(0)}$ 
+
+      \For{$k= 1$ to $n$}{
+         allocate $n \times n$ matrix $T^{(k)}$ 
+
+         \For{$i= 1$ to $n$}{
+             \For{$j= 1$ to $n$}{
+                $t_{ij}^{(k)}  =  t_{ij}^{(k-1)} \vee t_{ik}^{(k-1)} \wedge
+t_{kj}^{(k-1)} $
+              }
+          }
+      }
+      {\bf return} $T^{(n)}$ 
+    \end{algorithm}
+
+   \begin{algorithm}[H]
+   \caption{Ford-Fulkerson-Method($G,s,t$)}
+    Initialize flow $f$ to 0 \;
+    \While{there exists augmenting path $p$ in residual network $G_f$}{
+        augment flow $f$ along $p$ \;
+    }
+     {\bf return} $f$ \;
+   \end{algorithm}
+    
+  \end{minipage}
+  \begin{minipage}[t]{.25\linewidth}
+    \vspace{0pt}
+   \begin{algorithm}[H]
+   \caption{Ford-Fulkerson($G,s,t$)}
+    \For{each edge $(u,v)\in E$}{
+           $f(u,v)=0$ \;
+    }
+    \While{there exists path $p$ from $s$ to $t$ in $G_f$}{
+        $c_f(p) = \min \{c_f(u,v) : (u,v) \mbox{ is in $p$} \}$ \;
+        \For{each edge $(u,v) \in p$}{
+            \uIf{$(u,v) \in E$}{
+                $f(u,v)=f(u,v)+c_f(p)$ \;
+             }
+            \uElse{
+                $f(v,u)=f(v,u)-c_f(p)$ \;
+             }
+         }
+    }
+   \end{algorithm}
+
+
+    \begin{algorithm}[H]
+    \caption{Memoized-Cut-Rod-Aux($p,n,r$)}
+        \uIf{$r[n] \ge 0$}{
+            {\bf return} $r[n]$   \hspace*{0.5in} // $r$ initialized to all $-\infty$ \;
+         }
+        \uIf{$n==0$}{
+            $q=0$ \;
+         }
+        \uElse{
+          $q=-\infty$ \;
+           \For{$i=1$ to $n$}{
+             $q=\max (q, p[i] +$
+               $ \mbox{\sc Memoized-Cut-Rod-Aux}(p,n-i,r))$
+             }
+          $r[n]=q$ \;
+         }
+    {\bf return} $q$ \;
+    \end{algorithm}
+
+    \begin{algorithm}[H]
+    \caption{Bottom-Up-Cut-Rod($p,n$)}
+        Allocate $r[0\ldots n]$ \;
+        $r[0]=0$ \;
+         \For{$j=1$ to $n$}{
+          $q=-\infty$ \;
+           \For{$i=1$ to $j$}{
+             $q=\max \left(q, p[i] + r[j-i]  \right)$
+             }
+          $r[j]=q$ \;
+         }
+    {\bf return} $r[n]$ \;
+    \end{algorithm}
+  \end{minipage}
+  \begin{minipage}[t]{.25\linewidth}
+    \vspace{0pt}
+
+    \begin{algorithm}[H]
+    \caption{Extended-Bottom-Up-Cut-Rod($p,n$)}
+        Allocate $r[0\ldots n]$ and $s[0\ldots n]$ \;
+        $r[0]=0$ \;
+         \For{$j=1$ to $n$}{
+          $q=-\infty$ \;
+           \For{$i=1$ to $j$}{
+                \uIf{$q<p[i] + r[j-i]$}{
+                    $q=p[i]+r[j-i]$ \;
+                     $s[j]=i$ \;
+                 }
+             }
+          $r[j]=q$ \;
+         }
+    {\bf return} $r,s$ \;
+    \end{algorithm}
+    
+    {\bf Reductions}:
+    \begin{itemize}
+    \item Circuit-Sat $\rightarrow$ SAT: For each input to the CS, create a
+      variable in the SAT.  For each output of a logic gate, create a
+      variable.  Clauses in the SAT are the ouput iff (input gate
+      input gate ...). SAT is conjunction of clauses (including final
+      output).     
+    \item SAT $\rightarrow$ 3-CNF-SAT: Build a parse tree (outermost
+      to innermost).  This gets it to at most 3 elements per clause.
+      Then generate a truth table for the 3 elements, grab the ones
+      that evaluate to 1, or them, use DeMorgan's.  
+    \item 3-CNF-SAT $\rightarrow$ Clique: For each clause, make 3
+      vertices (representing the variables in the clause).  Draw edges
+      between vertices if the vertices aren't negations of each other
+      and they aren't from the same clause.
+    \item Clique $\rightarrow$ Vertex-Cover: Find the complement of
+      the graph in the Clique problem.  $VC-k$ becomes $|V| - clique-k$
+    \end{itemize}
+    
+  \end{minipage}
+  
+  
+  
+\end{figure*}
+\end{document}
