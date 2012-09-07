@@ -23,7 +23,21 @@ If $A$ is a regular language, then there is number $p$ (the pumping length) wher
 Prove pumping lemma by contradiction.  Assume the language is regular, then find an instance where $xyyz$ is not in the language.
 
 \subsubsection*{Decidability}
+All Context Free Grammars are decidable.  For regular languages (DFA, NFA, Regex), construct a Turing Machine that decides yes or no.
 
+\noindent
+On input $A$ where $A$ is a DFA:
+\begin{enumerate}
+\item Mark the start state of $A$
+\item Repeat until no new states get marked:
+\begin{itemize}
+\item Mark any state that has a transition coming into it from any state that is already marked.
+\end{itemize}
+\item If no accept state is marked, accept; otherwise, reject.
+\end{enumerate}
+
+\subsubsection*{Reducibility}
+Used to prove that a language is undecidable by showing that you can solve $A_{TM}$ (known to be undecidable) if the given language is decidable.  Key idea is to show that $A_{TM}$ is reducible to the language given.
 
 \subsection*{Algorithms}
 \subsubsection*{NP-Completeness}
