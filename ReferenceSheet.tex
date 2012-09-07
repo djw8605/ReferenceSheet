@@ -11,6 +11,8 @@
 
 \begin{multicols*}{4}
 \subsection*{Automata}
+\subsubsection*{Regular languages}
+DFA requires every state to have every possible transition.  NFA only requires you have the transitions necessary to accept.
 
 \subsubsection*{Pumping Lemma for regular languages}
 If $A$ is a regular language, then there is number $p$ (the pumping length) where, if $s$ is any string in $A$ of at least $p$, then $s$ may be divided into three pieces, $s = xyz$, satisfying the following conditions:
@@ -37,7 +39,7 @@ On input $A$ where $A$ is a DFA:
 \end{enumerate}
 
 \subsubsection*{Reducibility}
-Used to prove that a language is undecidable by showing that you can solve $A_{TM}$ (known to be undecidable) if the given language is decidable.  Key idea is to show that $A_{TM}$ is reducible to the language given.
+Used to prove that a language is undecidable by showing that you can solve $A_{TM}$ (known to be undecidable) if the given language is decidable.  Key idea is to show that $A_{TM}$ is reducible to the language given.  IE, use the language given to show that you can use it to solve $A_{TM}$.
 
 \subsection*{Algorithms}
 \subsubsection*{NP-Completeness}
